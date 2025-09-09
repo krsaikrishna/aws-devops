@@ -50,7 +50,7 @@ pipeline {
                                 docker stop app || true &&
                                 docker rm app || true &&
                                 docker run -d --name app -p 3000:3000 krsaikrishna/aws-devops:${BUILD_NUMBER}
-                            "
+                            '
                         """
                     }     
                 }
