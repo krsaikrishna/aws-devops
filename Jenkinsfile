@@ -1,25 +1,23 @@
 pipeline {
     agent any
-
+    
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-cred')  // Jenkins stored creds
-        DOCKERHUB_REPO = "krsaikrishna/aws-devops"
+         DOCKERHUB_CREDENTIALS = credentials('dockerhub-cred')
+         DOCKERHUB_REPO = "krsaikrishna/aws-devops"
     }
-
+    
     stages {
-        stage('Checkout') {
+        stage('checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/krsaikrishna/aws-devops.git'
             }
         }
-
         stage('Build & Test') {
             steps {
                 sh 'npm install'
                 sh 'npm test'
             }
         }
-
         stage('Build Docker Image') {
             steps {
                 script {
@@ -28,17 +26,15 @@ pipeline {
                 }
             }
         }
-
         stage('Push to Docker Hub') {
             steps {
                 script {
                     def imageTag = "${DOCKERHUB_REPO}:${BUILD_NUMBER}"
-                    sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
-                    sh "docker push ${imageTag}"
+                     sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
+                     sh "docker push ${imageTag}"
                 }
             }
         }
-
         stage('Deploy to EC2') {
             steps {
                 script {
@@ -49,11 +45,10 @@ pipeline {
                         docker stop app || true &&
                         docker rm app || true &&
                         docker run -d --name app -p 3000:3000 ${imageTag}
-                    '
-                    """
+                     '
+                     """
                 }
             }
         }
     }
 }
-
