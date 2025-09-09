@@ -44,7 +44,7 @@ pipeline {
                 script {
                     def imageTag = "${DOCKERHUB_REPO}:${BUILD_NUMBER}"
                     sh """
-                    ssh -o StrictHostKeyChecking=no ec2-user@<EC2-Public-IP> '
+                    ssh -o StrictHostKeyChecking=no ec2-user@18.144.52.69 '
                         docker pull ${imageTag} &&
                         docker stop app || true &&
                         docker rm app || true &&
