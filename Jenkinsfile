@@ -28,10 +28,14 @@ pipeline {
         }
         stage('Push to Docker Hub') {
             steps {
-                script {
-                    def imageTag = "${DOCKERHUB_REPO}:${BUILD_NUMBER}"
-                     sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
-                     sh "docker push ${imageTag}"
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    script {
+                        def imageTag = "${DOCKERHUB_REPO}:${BUILD_NUMBER}"
+                        sh """
+                            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                            docker push ${imageTag}
+                        """    
+                    }
                 }
             }
         }
