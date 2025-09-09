@@ -42,7 +42,7 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                  withCredentials([sshUserPrivateKey(credentialsId: 'my-ec2-key', keyFileVariable: 'SSH_KEY')]) {
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) { 
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) { 
                         sh '''
                             ssh -o StrictHostKeyChecking=no -i $SSH_KEY ec2-user@18.144.52.69 '
                                 echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin &&    
