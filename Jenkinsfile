@@ -41,16 +41,15 @@ pipeline {
         }
         stage('Deploy to EC2') {
             steps {
-                script {
-                    def imageTag = "${DOCKERHUB_REPO}:${BUILD_NUMBER}"
-                    sh """
-                    ssh -o StrictHostKeyChecking=no ec2-user@18.144.52.69 '
-                        docker pull ${imageTag} &&
-                        docker stop app || true &&
-                        docker rm app || true &&
-                        docker run -d --name app -p 3000:3000 ${imageTag}
-                     '
-                     """
+                withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) { 
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ec2-user@18.144.52.69 '
+                             docker pull krsaikrishna/aws-devops:${BUILD_NUMBER} &&
+                             docker stop app || true &&
+                             docker rm app || true &&
+                             docker run -d --name app -p 3000:3000 krsaikrishna/aws-devops:${BUILD_NUMBER}
+                        '
+                    '''
                 }
             }
         }
