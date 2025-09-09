@@ -41,7 +41,7 @@ pipeline {
         }
         stage('Deploy to EC2') {
             steps {
-                sshagent(['my-ec2-key']) {
+                 withCredentials([sshUserPrivateKey(credentialsId: 'my-ec2-key', keyFileVariable: 'SSH_KEY')]) {
                     withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) { 
                         sh '''
                             ssh -o StrictHostKeyChecking=no -i $SSH_KEY ec2-user@18.144.52.69 '
@@ -51,7 +51,7 @@ pipeline {
                                 docker rm app || true &&
                                 docker run -d --name app -p 3000:3000 krsaikrishna/aws-devops:${BUILD_NUMBER}
                             "
-                         '''
+                        '''
                     }     
                 }
             }
