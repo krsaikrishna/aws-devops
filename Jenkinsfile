@@ -43,7 +43,7 @@ pipeline {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) { 
                     sh '''
-                        ssh -o StrictHostKeyChecking=no ec2-user@18.144.52.69 '
+                        ssh -o StrictHostKeyChecking=no -i $SSH_KEY ec2-user@18.144.52.69 '
                              docker pull krsaikrishna/aws-devops:${BUILD_NUMBER} &&
                              docker stop app || true &&
                              docker rm app || true &&
