@@ -43,7 +43,7 @@ pipeline {
             steps {
                  withCredentials([sshUserPrivateKey(credentialsId: 'my-ec2-key', keyFileVariable: 'SSH_KEY')]) {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) { 
-                        sh '''
+                        sh """
                             ssh -o StrictHostKeyChecking=no -i $SSH_KEY ec2-user@18.144.52.69 '
                                 echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin &&    
                                 docker pull krsaikrishna/aws-devops:${BUILD_NUMBER} &&
@@ -51,7 +51,7 @@ pipeline {
                                 docker rm app || true &&
                                 docker run -d --name app -p 3000:3000 krsaikrishna/aws-devops:${BUILD_NUMBER}
                             "
-                        '''
+                        """
                     }     
                 }
             }
